@@ -60,6 +60,60 @@ public class StadisticService {
 		
 		return gayStadistics;
 	}
+
+	@RequestMapping(value = "/lesbiana",method = RequestMethod.GET)
+	@ResponseBody
+	public ArrayList<Stadistic> getLesbianaStadistics() {
+		ArrayList<Stadistic> lesbianaStadistics = new ArrayList<Stadistic>();
+		
+		Iterable<Stadistic> allStadistic =stadisticRepository.findAll();
+
+		for(Stadistic lesbianaStadistic: allStadistic) {
+			if(lesbianaStadistic.getName_stadistic().equals("lesbiana")) {
+				lesbianaStadistics.add(lesbianaStadistic);
+				System.out.println("agregue!!!");
+			}
+		}
+		
+		return lesbianaStadistics;
+	}
+	
+	@RequestMapping(value = "/transgenero",method = RequestMethod.GET)
+	@ResponseBody
+	public ArrayList<Stadistic> getTransgeneroStadistics() {
+		ArrayList<Stadistic> transgeneroStadistics = new ArrayList<Stadistic>();
+		
+		Iterable<Stadistic> allStadistic =stadisticRepository.findAll();
+
+		for(Stadistic transgeneroStadistic: allStadistic) {
+			if(transgeneroStadistic.getName_stadistic().equals("transgenero")) {
+				transgeneroStadistics.add(transgeneroStadistic);
+				System.out.println("agregue!!!");
+			}
+		}
+		
+		return transgeneroStadistics;
+	}
+
+	@RequestMapping(value = "/lgbt",method = RequestMethod.GET)
+	@ResponseBody
+	public ArrayList<Stadistic> getLgbtStadistics() {
+		ArrayList<Stadistic> lgbtStadistics = new ArrayList<Stadistic>();
+		
+		Iterable<Stadistic> allStadistic =stadisticRepository.findAll();
+
+		for(Stadistic lgbtStadistic: allStadistic) {
+			if(lgbtStadistic.getName_stadistic().equals("lgbt")) {
+				lgbtStadistics.add(lgbtStadistic);
+				System.out.println("agregue!!!");
+			}
+		}
+		
+		return lgbtStadistics;
+	}
+
+
+
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	@ResponseBody
