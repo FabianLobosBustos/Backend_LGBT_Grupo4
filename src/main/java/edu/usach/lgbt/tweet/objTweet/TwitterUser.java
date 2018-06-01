@@ -1,28 +1,25 @@
 package edu.usach.lgbt.tweet.objTweet;
 import org.bson.Document;
 
+
 //Clase que representa a un Usuario de Twitter, visto desde el punto de vista de la API de Twitter
 public class TwitterUser {
     private String screenName;
     private String name;
-    private String location;
     private int followersCount;
     private int friendsCount;
-    private boolean verified;
-
     
-
     //Constructor utilizado para crear el usuario del tweet desde MongoDB
     public TwitterUser(Document tweetFromDoc){
-        this.screenName = tweetFromDoc.getString("user");
-        this.name = tweetFromDoc.getString("name");
-        this.location = tweetFromDoc.getString("country");
-        //this.followersCount = tweetFromDoc.getInteger("followersCount");
-        this.followersCount = 0;
-        //this.friendsCount = tweetFromDoc.getInteger("friendsCount");
-        this.friendsCount = 0;
-        this.verified = tweetFromDoc.getBoolean("userVerified");
-        
+    	org.bson.Document user = (Document) tweetFromDoc.get("user");
+    	System.out.println("screen name: "+ user.getString("screenName") );
+        this.screenName = user.getString("screenName");
+        this.name = tweetFromDoc.getString("user.name");
+        System.out.println("ESTAMOS POR ENTRAR A FOLLOWERS");
+        System.out.println("followersss : " + tweetFromDoc.getInteger("user.followersCount"));
+        this.followersCount = tweetFromDoc.getInteger("user.followersCount");
+        this.friendsCount = tweetFromDoc.getInteger("user.friendsCount");
+        System.out.println("SALIENDO DE USER...");
     }
 
     public String getScreenName() {
@@ -33,9 +30,7 @@ public class TwitterUser {
         return name;
     }
 
-    public String getLocation() {
-        return location;
-    }
+
 
     public int getFollowersCount() {
         return followersCount;
@@ -45,7 +40,5 @@ public class TwitterUser {
         return friendsCount;
     }
 
-    public boolean isVerified() {
-        return verified;
-    }
+
 }

@@ -17,7 +17,7 @@ public class Tweet {
     private UserMentionEntity[] userMentionEntities;
     private int retweetCount;
     //private int userMentionsCount;
-    //private TwitterUser twitterUser;
+    private TwitterUser twitterUser;
     private GeoLocation geoLocation;
     //private List<Tweet> retweets = null;
 
@@ -31,7 +31,7 @@ public class Tweet {
         this.createdAt = tweetFromDoc.getDate("createdAt");
         //this.retweets = JSONToTweet((List<Document>)tweetFromDoc.get("retweets"));
         this.geoLocation = new GeoLocation(tweetFromDoc);
-       // this.twitterUser = new TwitterUser(tweetFromDoc);
+        this.twitterUser = new TwitterUser(tweetFromDoc);
         //this.userMentionsCount = tweetFromDoc.getInteger("userMentionsCount");
        // this.retweetCount = tweetFromDoc.getInteger("retweetCount");
     }
@@ -76,9 +76,13 @@ public class Tweet {
         return userMentionsCount;
     }*/
 
-    /*public TwitterUser getTwitterUser() {
+    public void setTwitterUser(TwitterUser twitterUser) {
+		this.twitterUser = twitterUser;
+	}
+
+	public TwitterUser getTwitterUser() {
         return twitterUser;
-    }*/
+    }
 
     public GeoLocation getGeoLocation() {
         return geoLocation;
