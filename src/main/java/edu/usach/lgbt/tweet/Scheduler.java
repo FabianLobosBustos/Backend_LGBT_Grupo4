@@ -5,11 +5,12 @@ import com.mongodb.client.MongoCursor;
 import edu.usach.lgbt.tweet.objTweet.Tweet;
 import edu.usach.lgbt.entities.Region;
 import edu.usach.lgbt.entities.Stadistic;
+import edu.usach.lgbt.entities.Tuser;
 import edu.usach.lgbt.tweet.database.MongoConnection;
 import edu.usach.lgbt.tweet.sentimentAnalyzer.SentimentAnalyzer;
 import edu.usach.lgbt.tweet.sentimentAnalyzer.TweetIndexer;
 import edu.usach.lgbt.repository.StadisticRepository;
-
+import edu.usach.lgbt.repository.TuserRepository;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryparser.classic.ParseException;
@@ -26,6 +27,10 @@ public class Scheduler {
 
 	@Autowired
 	private StadisticRepository stadisticRepository;
+	
+	@Autowired
+	private TuserRepository tuserRepository;
+	
 	
 	private MongoConnection connection = new MongoConnection("127.0.0.1", "27017", "twitter", "statusJSONImpl");
 
@@ -58,6 +63,14 @@ public class Scheduler {
 			org.bson.Document tweetDoc = tweetsDocs.next();
 			Tweet tweet = new Tweet(tweetDoc);
 			tweetsFromMongo.add(tweet);
+			Tuser tuser = new Tuser();
+			tuser.setIdTuser(tweet.getTwitterUser().getId());
+			tuser.setNameTuser(tweet.getTwitterUser().getName());
+			tuser.setScreennameTuser(tweet.getTwitterUser().getScreenName());
+			tuser.setRelevanceTuser(tweet.getTwitterUser().getFollowersCount() * 8 + tweet.getTwitterUser().getFriendsCount()* 2);
+			tuserRepository.save(tuser);
+			
+			
 		}
 		int[] sentiment;
 
