@@ -1,132 +1,101 @@
 package edu.usach.lgbt.entities;
 
+import java.io.Serializable;
 import javax.persistence.*;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import java.sql.Timestamp;
-import java.util.HashSet;
-import java.util.Set;
 
 
-
+/**
+ * The persistent class for the stadistic database table.
+ * 
+ */
 @Entity
-@JsonIgnoreProperties({"stadistic"})
 @Table(name="stadistic")
-@NamedQuery(name="Stadistic.findAll", query="SELECT a FROM Stadistic a")
-public class Stadistic{
+@NamedQuery(name="Stadistic.findAll", query="SELECT s FROM Stadistic s")
+public class Stadistic implements Serializable {
+	private static final long serialVersionUID = 1L;
 
-    private static final long serialVersionUID = 1L;
+	@Id
+	@Column(name="id_stadistic")
+	private int idStadistic;
 
-    @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-	private int id_stadistic;
+	@Column(name="contingency_stadistic")
+	private int contingencyStadistic;
 
-	@Column(name="name_stadistic", nullable=false, length=70)
-	private String name_stadistic;
+	@Column(name="date_stadistic")
+	private Timestamp dateStadistic;
 
-	@Column(name="positive_stadistic", nullable=false)
-	private int positive_stadistic;
-	
-	@Column(name="negative_stadistic", nullable=false)
-	private int negative_stadistic;
+	@Column(name="name_stadistic")
+	private String nameStadistic;
 
-	@Column(name="contingency_stadistic", nullable=false)
-	private int contingency_stadistic;
+	@Column(name="negative_stadistic")
+	private int negativeStadistic;
 
-	@Column(name="date_stadistic", nullable=true)
-	private Timestamp date_stadistic;
-	
-	/*
-	@Column(name="id_region", nullable=true)
-	private int id_region;
-	*/
-	
-	//luego usaremos las otras partes, por ahora solo analisis
-	// de sentimientos.
+	@Column(name="positive_stadistic")
+	private int positiveStadistic;
 
-	
+	//bi-directional many-to-one association to Region
+	@ManyToOne
+	@JoinColumn(name="idRegion")
+	private Region region;
+
 	public Stadistic() {
 	}
 
-
-
-	public int getId_stadistic() {
-		return id_stadistic;
+	public int getIdStadistic() {
+		return this.idStadistic;
 	}
 
-
-
-	public void setId_stadistic(int id_stadistic) {
-		this.id_stadistic = id_stadistic;
+	public void setIdStadistic(int idStadistic) {
+		this.idStadistic = idStadistic;
 	}
 
-
-
-	public String getName_stadistic() {
-		return name_stadistic;
+	public int getContingencyStadistic() {
+		return this.contingencyStadistic;
 	}
 
-
-
-	public void setName_stadistic(String name_stadistic) {
-		this.name_stadistic = name_stadistic;
+	public void setContingencyStadistic(int contingencyStadistic) {
+		this.contingencyStadistic = contingencyStadistic;
 	}
 
-
-
-
-	public Timestamp getDate_stadistic() {
-		return date_stadistic;
+	public Timestamp getDateStadistic() {
+		return this.dateStadistic;
 	}
 
-
-
-	public void setDate_stadistic(Timestamp date_stadistic) {
-		this.date_stadistic = date_stadistic;
+	public void setDateStadistic(Timestamp dateStadistic) {
+		this.dateStadistic = dateStadistic;
 	}
 
-
-
-	public int getPositive_stadistic() {
-		return positive_stadistic;
+	public String getNameStadistic() {
+		return this.nameStadistic;
 	}
 
-
-
-	public void setPositive_stadistic(int positive_stadistic) {
-		this.positive_stadistic = positive_stadistic;
+	public void setNameStadistic(String nameStadistic) {
+		this.nameStadistic = nameStadistic;
 	}
 
-
-
-	public int getNegative_stadistic() {
-		return negative_stadistic;
+	public int getNegativeStadistic() {
+		return this.negativeStadistic;
 	}
 
-
-
-	public void setNegative_stadistic(int negative_stadistic) {
-		this.negative_stadistic = negative_stadistic;
+	public void setNegativeStadistic(int negativeStadistic) {
+		this.negativeStadistic = negativeStadistic;
 	}
 
-
-
-	public int getContingency_stadistic() {
-		return contingency_stadistic;
+	public int getPositiveStadistic() {
+		return this.positiveStadistic;
 	}
 
-
-
-	public void setContingency_stadistic(int contingency_stadistic) {
-		this.contingency_stadistic = contingency_stadistic;
+	public void setPositiveStadistic(int positiveStadistic) {
+		this.positiveStadistic = positiveStadistic;
 	}
 
+	public Region getRegion() {
+		return this.region;
+	}
 
-	
+	public void setRegion(Region region) {
+		this.region = region;
+	}
 
-	
 }

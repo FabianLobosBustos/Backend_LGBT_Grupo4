@@ -52,7 +52,7 @@ public class StadisticService {
 		Iterable<Stadistic> allStadistic =stadisticRepository.findAll();
 
 		for(Stadistic gayStadistic: allStadistic) {
-			if(gayStadistic.getName_stadistic().equals("gay")) {
+			if(gayStadistic.getNameStadistic().equals("gay")) {
 				gayStadistics.add(gayStadistic);
 				System.out.println("agregue!!!");
 			}
@@ -69,7 +69,7 @@ public class StadisticService {
 		Iterable<Stadistic> allStadistic =stadisticRepository.findAll();
 
 		for(Stadistic lesbianaStadistic: allStadistic) {
-			if(lesbianaStadistic.getName_stadistic().equals("lesbiana")) {
+			if(lesbianaStadistic.getNameStadistic().equals("lesbiana")) {
 				lesbianaStadistics.add(lesbianaStadistic);
 				System.out.println("agregue!!!");
 			}
@@ -86,7 +86,7 @@ public class StadisticService {
 		Iterable<Stadistic> allStadistic =stadisticRepository.findAll();
 
 		for(Stadistic transgeneroStadistic: allStadistic) {
-			if(transgeneroStadistic.getName_stadistic().equals("transgenero")) {
+			if(transgeneroStadistic.getNameStadistic().equals("transgenero")) {
 				transgeneroStadistics.add(transgeneroStadistic);
 				System.out.println("agregue!!!");
 			}
@@ -103,7 +103,7 @@ public class StadisticService {
 		Iterable<Stadistic> allStadistic =stadisticRepository.findAll();
 
 		for(Stadistic lgbtStadistic: allStadistic) {
-			if(lgbtStadistic.getName_stadistic().equals("lgbt")) {
+			if(lgbtStadistic.getNameStadistic().equals("lgbt")) {
 				lgbtStadistics.add(lgbtStadistic);
 				System.out.println("agregue!!!");
 			}

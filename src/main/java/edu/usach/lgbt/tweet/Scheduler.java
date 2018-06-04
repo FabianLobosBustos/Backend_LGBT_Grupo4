@@ -3,6 +3,7 @@ package edu.usach.lgbt.tweet;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import edu.usach.lgbt.tweet.objTweet.Tweet;
+import edu.usach.lgbt.entities.Region;
 import edu.usach.lgbt.entities.Stadistic;
 import edu.usach.lgbt.tweet.database.MongoConnection;
 import edu.usach.lgbt.tweet.sentimentAnalyzer.SentimentAnalyzer;
@@ -216,10 +217,10 @@ public class Scheduler {
 				System.out.println("contador positivo "+ contadorPositivo);
 				System.out.println("contador negativo "+ contadorNegativo);
 				System.out.println("contador contingencia "+ contadorContingencia);
-				stadistic.setPositive_stadistic(contadorPositivo);
-				stadistic.setNegative_stadistic(contadorNegativo);
-				stadistic.setContingency_stadistic(contadorContingencia);
-				stadistic.setName_stadistic(tema);
+				stadistic.setPositiveStadistic(contadorPositivo);
+				stadistic.setNegativeStadistic(contadorNegativo);
+				stadistic.setContingencyStadistic(contadorContingencia);
+				stadistic.setNameStadistic(tema);
 				stadisticRepository.save(stadistic);
 
 			}

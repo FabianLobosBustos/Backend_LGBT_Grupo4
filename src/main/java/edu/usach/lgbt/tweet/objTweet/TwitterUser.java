@@ -17,8 +17,8 @@ public class TwitterUser {
         this.name = tweetFromDoc.getString("user.name");
         System.out.println("ESTAMOS POR ENTRAR A FOLLOWERS");
         System.out.println("followersss : " + tweetFromDoc.getInteger("user.followersCount"));
-        this.followersCount = tweetFromDoc.getInteger("user.followersCount");
-        this.friendsCount = tweetFromDoc.getInteger("user.friendsCount");
+        //this.followersCount = tweetFromDoc.getInteger("user.followersCount");
+        //this.friendsCount = tweetFromDoc.getInteger("user.friendsCount");
         System.out.println("SALIENDO DE USER...");
     }
 
