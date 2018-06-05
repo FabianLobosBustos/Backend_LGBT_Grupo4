@@ -60,6 +60,7 @@ public class Scheduler {
 		MongoCollection<org.bson.Document> collection = this.connection.getCollection();
 		MongoCursor<org.bson.Document> tweetsDocs = collection.find().iterator();
 		while(tweetsDocs.hasNext()){
+		
 			org.bson.Document tweetDoc = tweetsDocs.next();
 			Tweet tweet = new Tweet(tweetDoc);
 			tweetsFromMongo.add(tweet);
@@ -68,8 +69,7 @@ public class Scheduler {
 			tuser.setNameTuser(tweet.getTwitterUser().getName());
 			tuser.setScreennameTuser(tweet.getTwitterUser().getScreenName());
 			tuser.setRelevanceTuser(tweet.getTwitterUser().getFollowersCount() * 8 + tweet.getTwitterUser().getFriendsCount()* 2);
-			tuserRepository.save(tuser);
-			
+			tuserRepository.save(tuser);	
 			
 		}
 		int[] sentiment;
