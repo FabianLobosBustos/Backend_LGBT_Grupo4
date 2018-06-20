@@ -19,34 +19,31 @@ public class Tweet {
     //private int userMentionsCount;
     private TwitterUser twitterUser;
     private GeoLocation geoLocation;
-    //private List<Tweet> retweets = null;
+    private Tweet retweet = null;
 
 
     //Constructor para crear Tweets desde MongoDB
     public Tweet(Document tweetFromDoc){
-       
-
         this.id = tweetFromDoc.getLong("_id");
         this.text = tweetFromDoc.getString("text");
         this.createdAt = tweetFromDoc.getDate("createdAt");
-        //this.retweets = JSONToTweet((List<Document>)tweetFromDoc.get("retweets"));
+        this.retweet = JSONtoTweet((Document) tweetFromDoc.get("retweetedStatus"));
         this.geoLocation = new GeoLocation(tweetFromDoc);
         this.twitterUser = new TwitterUser(tweetFromDoc);
         //this.userMentionsCount = tweetFromDoc.getInteger("userMentionsCount");
        // this.retweetCount = tweetFromDoc.getInteger("retweetCount");
     }
-
-    public List<Tweet> JSONToTweet(List<Document> tweets){
-        List<Tweet> listTweets = new ArrayList<>();
-        if(tweets == null){
-            return null;
-        }
-        for(Document tweet : tweets){
-            Tweet tweet1 = new Tweet(tweet);
-            listTweets.add(tweet1);
-        }
-        return listTweets;
+    
+    public Tweet JSONtoTweet(Document retweetedStatus) {
+    	if(retweetedStatus!= null) {
+    		return new Tweet(retweetedStatus);
+    	}else {
+    		return null;
+    	}
     }
+
+    
+    
 
     public Long getId() {
         return id;
@@ -88,7 +85,17 @@ public class Tweet {
         return geoLocation;
     }
 
-   /* public List<Tweet> getRetweets() {
-        return retweets;
-    }*/
+
+
+	public Tweet getRetweet() {
+		return retweet;
+	}
+
+
+
+	public void setRetweet(Tweet retweet) {
+		this.retweet = retweet;
+	}
+
+    
 }

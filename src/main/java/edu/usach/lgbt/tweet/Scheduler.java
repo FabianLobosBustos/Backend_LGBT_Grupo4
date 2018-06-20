@@ -9,18 +9,25 @@ import edu.usach.lgbt.entities.Tuser;
 import edu.usach.lgbt.tweet.database.MongoConnection;
 import edu.usach.lgbt.tweet.sentimentAnalyzer.SentimentAnalyzer;
 import edu.usach.lgbt.tweet.sentimentAnalyzer.TweetIndexer;
+
+import edu.usach.lgbt.graph.TwitterUserNode;
+import edu.usach.lgbt.graphrepository.TwitterUserNodeRepository;
 import edu.usach.lgbt.repository.StadisticRepository;
 import edu.usach.lgbt.repository.TuserRepository;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Component
 public class Scheduler {
@@ -31,8 +38,12 @@ public class Scheduler {
 	@Autowired
 	private TuserRepository tuserRepository;
 	
+	@Autowired
+	private TwitterUserNodeRepository twitterUserNodeRepository;
 	
 	private MongoConnection connection = new MongoConnection("127.0.0.1", "27017", "twitter", "statusJSONImpl");
+
+	
 
 
 
@@ -50,7 +61,7 @@ public class Scheduler {
 	 * almacenar su valoración en la base de datos MySQL.
 	 * @return void
 	 */
-	@Scheduled(cron = "*/10 * * * * *")
+	@Scheduled(cron = "*/100000 * * * * *")
 	public void dailyTask(){
 
 		//delete();
@@ -64,12 +75,15 @@ public class Scheduler {
 			org.bson.Document tweetDoc = tweetsDocs.next();
 			Tweet tweet = new Tweet(tweetDoc);
 			tweetsFromMongo.add(tweet);
+			/*
 			Tuser tuser = new Tuser();
 			tuser.setIdTuser(tweet.getTwitterUser().getId());
 			tuser.setNameTuser(tweet.getTwitterUser().getName());
 			tuser.setScreennameTuser(tweet.getTwitterUser().getScreenName());
 			tuser.setRelevanceTuser(tweet.getTwitterUser().getFollowersCount() * 8 + tweet.getTwitterUser().getFriendsCount()* 2);
+			tuser.setImageTuser(tweet.getTwitterUser().getProfileUrl());
 			tuserRepository.save(tuser);	
+			*/
 			
 		}
 		int[] sentiment;
@@ -205,7 +219,7 @@ public class Scheduler {
                 }
                 for(String keyWord : keyWords[bandera]){
                     for(Document searchedTweet : indexer.searchTweets(keyWord)){
-                    	System.out.println(searchedTweet.toString());
+                    	
                         tweets.add(searchedTweet);
                     }
                 }
@@ -226,21 +240,129 @@ public class Scheduler {
 
 					contadorContingencia = contadorContingencia + sentiment[0];
 				}
-				System.out.println(tema);
-				System.out.println("contador positivo "+ contadorPositivo);
-				System.out.println("contador negativo "+ contadorNegativo);
-				System.out.println("contador contingencia "+ contadorContingencia);
+
 				stadistic.setPositiveStadistic(contadorPositivo);
 				stadistic.setNegativeStadistic(contadorNegativo);
 				stadistic.setContingencyStadistic(contadorContingencia);
 				stadistic.setNameStadistic(tema);
-				stadisticRepository.save(stadistic);
+				//stadisticRepository.save(stadistic);
 
 			}
 		} catch (IOException | ParseException e) {
 			e.printStackTrace();
 		}
 	}
+	
+	 /**
+     * Método que se encarga de formar el grafo de influencia. Es un método programado que se realiza
+     * diariamente, luego de crear los índices invertidos.
+     */
+	@Scheduled(cron = "*/100000 * * * * *")
+    public void createGraph(){
+    	System.out.println("PICO");
+        
+       
+    	//twitterUserNodeRepository.deleteAll();
+
+       
+
+       
+        
+        
+        List <Tuser> tusers = (List<Tuser>) tuserRepository.findAll();
+
+        // Se almacenan los prestadores en el grafo
+        
+		List<Document> tweets;
+		List<Tweet> tweetsFromMongo = new ArrayList<>();
+		MongoCollection<org.bson.Document> collection = this.connection.getCollection();
+		MongoCursor<org.bson.Document> tweetsDocs = collection.find().iterator();
+		while(tweetsDocs.hasNext()){
+			//System.out.println("----------------CACA-----------------");
+			org.bson.Document tweetDoc = tweetsDocs.next();
+			Tweet tweet = new Tweet(tweetDoc);
+			tweetsFromMongo.add(tweet);	
+			
+		}
+        for(Tuser tuser : tusers) {
+        	 for(Tweet tweet : tweetsFromMongo) {
+        		 try {
+                     if(tweet.getTwitterUser().getName().equals(tuser.getNameTuser())) {
+                    	 Tweet retweet= tweet.getRetweet();
+                    	 if(this.twitterUserNodeRepository.findByName(tweet.getTwitterUser().getName()) != null){
+                    		
+                    	
+                          	 
+                    		 
+                    		 TwitterUserNode twitterUserNode1 = this.twitterUserNodeRepository.findByName(tweet.getTwitterUser().getName());
+                    		 
+                    		 if(retweet != null){
+                    			
+                    			 TwitterUserNode retweetUser;
+                    			if(this.twitterUserNodeRepository.findByName(retweet.getTwitterUser().getName()) != null) {
+                    				retweetUser = this.twitterUserNodeRepository.findByName(retweet.getTwitterUser().getName());
+                    			}
+                    			else {
+                    				retweetUser = new TwitterUserNode(retweet, twitterUserNode1.getIdTweet());
+                    			}
+                    	
+                    		 
+                               	twitterUserNode1.addInfluenceRelationship(retweetUser);
+                               //	this.twitterUserNodeRepository.save(retweetUser);
+                            
+                               	
+                           	}
+                    		 
+                    		
+                    			// this.twitterUserNodeRepository.save(twitterUserNode1); 
+                    		
+                    			 
+                    		
+                    		 
+                    		 
+                    		 
+                    	 }
+                    	 else {
+                    		 
+                    		 // Se crea el usuario de Twitter como nodo
+                    		 TwitterUserNode twitterUserNode = new TwitterUserNode(tweet, -1L);
+                         	// Se agregan sus Retweets al grafo, si es que los tiene
+                         	if(retweet != null){
+                         		TwitterUserNode retweetUser;
+                         			if(this.twitterUserNodeRepository.findByName(retweet.getTwitterUser().getName()) != null) {
+                         				retweetUser = this.twitterUserNodeRepository.findByName(retweet.getTwitterUser().getName());
+                         			}
+                         			else {
+                         				retweetUser = new TwitterUserNode(retweet, twitterUserNode.getIdTweet());
+                         			}
+                   	
+                   		 
+                              	twitterUserNode.addInfluenceRelationship(retweetUser);
+                              	//this.twitterUserNodeRepository.save(retweetUser);
+                         		
+                            	
+                            
+                        	}
+                         	//this.twitterUserNodeRepository.save(twitterUserNode);
+                    	 }
+      
+                             
+                         }
+        			 
+        		 }catch(Exception e) {
+        			 
+        		 }
+
+                 }
+
+                   
+        	 }
+        }
+       
+            
+          
+        
+    
 
 
 }

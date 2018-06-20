@@ -44,12 +44,20 @@ public class RegionService {
 		
 		Iterable<Region> allRegions = regionRepository.findAll();
 		
-		
+		System.out.println("MARCAD0R---");
 		for(Region region: allRegions) {
-			ArrayList<Stadistic> stadistics = (ArrayList<Stadistic>) region.getStadistics();
-				Stadistic lastStadistic = stadistics.get(stadistics.size()-1);
-				regionStadistics.add(lastStadistic);
+			java.util.List<Stadistic> stadistics =  region.getStadistics();
+			for (Stadistic stadisticToevaluate: stadistics) {
+				
+				if(stadisticToevaluate.getNameStadistic().equals("lgbt")) {
+					regionStadistics.add(stadisticToevaluate);
+					System.out.println(stadisticToevaluate.toString());
+				}
+			}
+		
 		}
+		
+		
 		
 		return regionStadistics;
 	}

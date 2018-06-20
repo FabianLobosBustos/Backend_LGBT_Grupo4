@@ -27,6 +27,9 @@ public class Tuser implements Serializable {
 
 	@Column(name="relevance_tuser")
 	private int relevanceTuser;
+	
+	@Column(name="image_tuser")
+	private String imageTuser;
 
 
 	public Tuser() {
@@ -75,6 +78,16 @@ public class Tuser implements Serializable {
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+
+	public String getImageTuser() {
+		return imageTuser;
+	}
+
+
+	public void setImageTuser(String imageTuser) {
+		this.imageTuser = imageTuser;
 	}
 
 	
