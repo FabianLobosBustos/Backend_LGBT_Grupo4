@@ -1,4 +1,4 @@
-# Front LGBTweet
+# Back LGBTweet
 
 ![](static/img/9.png)
 
@@ -45,7 +45,7 @@ Entrega un array de 15 stadistics donde el 1 stadistic corresponde al de la regi
 + http://localhost:8082/lgbTweet/twitterUser
 Entrega todos los usuarios que han twitteado o retwitteado respecto al tema LGBT, ordenados por su nivel de influencia (calculada por heuristica)
 
-### rutas de neo4j
+#### rutas de neo4j
 + http://localhost:8082/lgbTweet/node/neo4j
 Entrega el grafo de influencia de los 10 usuarios mas influyentes, hasta con un 3 grado de relacion
 
