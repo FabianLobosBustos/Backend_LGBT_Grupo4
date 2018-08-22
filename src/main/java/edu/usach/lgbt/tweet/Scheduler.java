@@ -75,15 +75,20 @@ public class Scheduler {
 			org.bson.Document tweetDoc = tweetsDocs.next();
 			Tweet tweet = new Tweet(tweetDoc);
 			tweetsFromMongo.add(tweet);
-			/*
+			
+			
+			
 			Tuser tuser = new Tuser();
 			tuser.setIdTuser(tweet.getTwitterUser().getId());
 			tuser.setNameTuser(tweet.getTwitterUser().getName());
 			tuser.setScreennameTuser(tweet.getTwitterUser().getScreenName());
 			tuser.setRelevanceTuser(tweet.getTwitterUser().getFollowersCount() * 8 + tweet.getTwitterUser().getFriendsCount()* 2);
 			tuser.setImageTuser(tweet.getTwitterUser().getProfileUrl());
-			tuserRepository.save(tuser);	
-			*/
+			
+			//if(!tuserRepository.existsById((int)tweet.getTwitterUser().getId())) {
+				//tuserRepository.save(tuser);	
+			//}
+			
 			
 		}
 		int[] sentiment;
@@ -231,11 +236,11 @@ public class Scheduler {
 					sentiment = sentimentAnalyzer.calculateSentiment(tweet.get("tweet"));
 					//si hay mas positivos
 					if(sentiment[1] > sentiment[3] ){
-						contadorPositivo++;
+						contadorPositivo = contadorPositivo+sentiment[1]+sentiment[2];
 					}
 						//si hay mas negativos
 					if(sentiment[3] > sentiment[1] ) {
-						contadorNegativo++;
+						contadorNegativo = contadorNegativo+sentiment[3]+sentiment[2];
 					}
 
 					contadorContingencia = contadorContingencia + sentiment[0];
@@ -307,14 +312,14 @@ public class Scheduler {
                     			}
                     	
                     		 
-                               	twitterUserNode1.addInfluenceRelationship(retweetUser);
-                               //	this.twitterUserNodeRepository.save(retweetUser);
+                               	//twitterUserNode1.addInfluenceRelationship(retweetUser);
+                               	//this.twitterUserNodeRepository.save(retweetUser);
                             
                                	
                            	}
                     		 
                     		
-                    			// this.twitterUserNodeRepository.save(twitterUserNode1); 
+                    			 //this.twitterUserNodeRepository.save(twitterUserNode1); 
                     		
                     			 
                     		
@@ -337,7 +342,7 @@ public class Scheduler {
                          			}
                    	
                    		 
-                              	twitterUserNode.addInfluenceRelationship(retweetUser);
+                              	//twitterUserNode.addInfluenceRelationship(retweetUser);
                               	//this.twitterUserNodeRepository.save(retweetUser);
                          		
                             	

@@ -2,11 +2,16 @@ package edu.usach.lgbt.rest;
 
 
 
+import java.sql.Time;
+import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Optional;
 
+import org.apache.lucene.document.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.http.HttpStatus;
@@ -20,12 +25,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
+
 import antlr.collections.List;
 
 import edu.usach.lgbt.entities.Stadistic;
 
 
 import edu.usach.lgbt.repository.StadisticRepository;
+import edu.usach.lgbt.tweet.database.MongoConnection;
+import edu.usach.lgbt.tweet.objTweet.Tweet;
 
 @CrossOrigin
 @RestController  
@@ -35,7 +45,10 @@ public class StadisticService {
 	@Autowired
 	private StadisticRepository stadisticRepository;
 	
+	private MongoConnection connection = new MongoConnection("127.0.0.1", "27017", "twitter", "statusJSONImpl");
 
+	private ArrayList <String> tweetsImportantes;
+	
     @CrossOrigin
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
@@ -121,7 +134,42 @@ public class StadisticService {
 		return stadisticRepository.findById(id);
 	}
 	
+	
+	
+	@RequestMapping(value = "/importantTweets",method = RequestMethod.GET)
+	@ResponseBody
+	public ArrayList<String> getImportantTweetsStadistics() {
 
+		
+		int noOfDays = -7; //i.e two weeks
+		Calendar calendar = Calendar.getInstance();
+		 Date dateOfOrder = new Date();
+		calendar.setTime(dateOfOrder);            
+		calendar.add(Calendar.DAY_OF_YEAR, noOfDays);
+		Date date = calendar.getTime();
+		
+		tweetsImportantes = new ArrayList<String>();
+		MongoCollection<org.bson.Document> collection = this.connection.getCollection();
+		MongoCursor<org.bson.Document> tweetsDocs = collection.find().iterator();
+		while(tweetsDocs.hasNext()){
+			org.bson.Document tweetDoc = tweetsDocs.next();
+			Tweet tweet = new Tweet(tweetDoc);
+			
+		
+			
+			if(tweet.getCreatedAt().after(date)) {
+				if(6*tweet.getTwitterUser().getFriendsCount()+8*tweet.getTwitterUser().getFollowersCount()>100000) {
+					//if(tweet.getRetweetCount()>500) {
+					System.out.println(tweet.getId().toString());
+					tweetsImportantes.add(tweet.getId().toString());
+					//}
+				}				
+			}
+
+			
+		}
+		return tweetsImportantes;
+	}
 	/*
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseBody

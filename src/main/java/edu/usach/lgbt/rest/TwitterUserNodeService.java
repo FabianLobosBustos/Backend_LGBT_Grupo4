@@ -26,10 +26,12 @@ import org.springframework.web.bind.annotation.RestController;
 import antlr.collections.List;
 import edu.usach.lgbt.entities.Region;
 import edu.usach.lgbt.entities.Stadistic;
+import edu.usach.lgbt.entities.Tuser;
 import edu.usach.lgbt.graph.TwitterUserNode;
 import edu.usach.lgbt.graphrepository.TwitterUserNodeRepository;
 import edu.usach.lgbt.repository.RegionRepository;
 import edu.usach.lgbt.repository.StadisticRepository;
+import edu.usach.lgbt.repository.TuserRepository;
 
 
 @CrossOrigin
@@ -40,7 +42,8 @@ public class TwitterUserNodeService {
 	@Autowired
 	private TwitterUserNodeRepository twitterUserNodeRepository;
 	
-
+	@Autowired
+	private TuserRepository tuserRepository;
     @CrossOrigin
     @RequestMapping(value= "/byName/{name}",method = RequestMethod.GET)
     @ResponseBody
@@ -59,7 +62,9 @@ public class TwitterUserNodeService {
         // Nodo del prestador y los usuarios que tweetean sobre el
     	Iterable<TwitterUserNode> diezInfluyentes = twitterUserNodeRepository.findTenMoreRelevants();
         
+    	Iterable<Tuser> diezInfluyentes_correctos = tuserRepository.findTenRelevants();
         
+    	
         JSONObject graphJSON = new JSONObject();
         JSONArray nodes = new JSONArray();
         JSONArray edges = new JSONArray();
@@ -67,16 +72,16 @@ public class TwitterUserNodeService {
         JSONObject edge;
 
         // Para crear el JSON se agregan los 10 mas influyentes
-        for(TwitterUserNode nodoInfluyente_nivel_1 : diezInfluyentes) {
+        for(Tuser nodoInfluyente_nivel_1 : diezInfluyentes_correctos) {
            	JSONObject node = new JSONObject();  
-            node.put("id", nodoInfluyente_nivel_1.getIdUser());
-            node.put("name", nodoInfluyente_nivel_1.getName());
-            node.put("influencia", nodoInfluyente_nivel_1.getInfluence());
+            node.put("id", nodoInfluyente_nivel_1.getIdTuser());
+            node.put("name", nodoInfluyente_nivel_1.getNameTuser());
+            node.put("influencia", nodoInfluyente_nivel_1.getRelevanceTuser());
             nodes.add(node);
             
             
             
-            Set<TwitterUserNode> circuloInfluencia_nivel_2 =  twitterUserNodeRepository.findAllRelatedNodes(nodoInfluyente_nivel_1.getIdUser());
+            Set<TwitterUserNode> circuloInfluencia_nivel_2 =  twitterUserNodeRepository.findAllRelatedNodes(nodoInfluyente_nivel_1.getIdTuser());
             if( circuloInfluencia_nivel_2 != null) {
         	  
             	for(TwitterUserNode nodoInfluyente_nivel_2 : circuloInfluencia_nivel_2) {
@@ -87,7 +92,7 @@ public class TwitterUserNodeService {
             		nodes.add(node1);
                   
             		edge = new JSONObject();
-            		edge.put("source", nodoInfluyente_nivel_1.getIdUser() );
+            		edge.put("source", nodoInfluyente_nivel_1.getIdTuser() );
             		edge.put("target", nodoInfluyente_nivel_2.getIdUser());
             		edges.add(edge);
                   
@@ -106,7 +111,25 @@ public class TwitterUserNodeService {
                         	 edge.put("target", nodoInfluyente_nivel_3.getIdUser());
                         	 edges.add(edge);
                           
-                          
+                     		Set<TwitterUserNode> circuloInfluencia_nivel_4 = twitterUserNodeRepository.findAllRelatedNodes(nodoInfluyente_nivel_3.getIdUser());
+                            
+                    		if(circuloInfluencia_nivel_4 != null) {
+                        		for(TwitterUserNode nodoInfluyente_nivel_4 : circuloInfluencia_nivel_4) {
+                                	JSONObject node111 = new JSONObject();
+                                	node111.put("id", nodoInfluyente_nivel_4.getIdUser());
+                                	node111.put("name", nodoInfluyente_nivel_4.getName());
+                                	node111.put("influencia", nodoInfluyente_nivel_4.getInfluence());
+                                	nodes.add(node111);
+                                  
+                                	 edge = new JSONObject();
+                                	 edge.put("source", nodoInfluyente_nivel_3.getIdUser() );
+                                	 edge.put("target", nodoInfluyente_nivel_4.getIdUser());
+                                	 edges.add(edge);
+                                  
+                                  
+                        		}          			
+                    		}  
+                		
                 		}          			
             		}
 
